@@ -1,0 +1,48 @@
+package com.gudaocat.app.ui.theme
+
+import android.app.Activity
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+
+private val DarkColorScheme = darkColorScheme(
+    primary = Orange,
+    onPrimary = TextWhite,
+    primaryContainer = OrangeDark,
+    onPrimaryContainer = OrangeLight,
+    secondary = Pink,
+    onSecondary = DarkBg,
+    secondaryContainer = PinkLight,
+    background = DarkBg,
+    onBackground = TextWhite,
+    surface = DarkSurface,
+    onSurface = TextWhite,
+    surfaceVariant = DarkCard,
+    onSurfaceVariant = TextGray,
+    error = Error,
+    onError = TextWhite,
+    outline = TextDim,
+)
+
+@Composable
+fun GudaoCatTheme(content: @Composable () -> Unit) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = DarkBg.toArgb()
+            window.navigationBarColor = DarkBg.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = DarkColorScheme,
+        typography = Typography,
+        content = content,
+    )
+}
