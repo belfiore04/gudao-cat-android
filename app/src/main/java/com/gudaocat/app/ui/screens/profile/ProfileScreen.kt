@@ -37,6 +37,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.gudaocat.app.BuildConfig
+import com.gudaocat.app.data.mock.MockData
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
@@ -51,6 +53,10 @@ fun ProfileScreen(
     onLogout: () -> Unit,
 ) {
     val state by authViewModel.state.collectAsState()
+    val displayUser = state.user ?: if (BuildConfig.DEMO_MODE) MockData.currentUser else null
+    val followingCount = if (BuildConfig.DEMO_MODE) MockData.followingCount.toString() else "0"
+    val followerCount = if (BuildConfig.DEMO_MODE) MockData.followerCount.toString() else "0"
+    val postCount = if (BuildConfig.DEMO_MODE) MockData.postCount.toString() else "0"
 
     Column(
         modifier = Modifier
@@ -76,7 +82,7 @@ fun ProfileScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = state.user?.username?.firstOrNull()?.uppercase() ?: "?",
+                    text = displayUser?.username?.firstOrNull()?.uppercase() ?: "?",
                     style = MaterialTheme.typography.headlineLarge,
                     color = Color.White,
                 )
@@ -86,13 +92,13 @@ fun ProfileScreen(
 
             Column {
                 Text(
-                    text = state.user?.username ?: "未登录",
+                    text = displayUser?.username ?: "未登录",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = state.user?.bio ?: "这只猫奴还没有签名~",
+                    text = displayUser?.bio ?: "这只猫奴还没有签名~",
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextGray,
                 )
@@ -108,9 +114,9 @@ fun ProfileScreen(
                 .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            StatItem("0", "关注")
-            StatItem("0", "粉丝")
-            StatItem("0", "帖子")
+            StatItem(followingCount, "关注")
+            StatItem(followerCount, "粉丝")
+            StatItem(postCount, "帖子")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

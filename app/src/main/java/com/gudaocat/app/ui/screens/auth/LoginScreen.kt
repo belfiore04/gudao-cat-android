@@ -48,6 +48,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gudaocat.app.BuildConfig
 import com.gudaocat.app.ui.components.GradientButton
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCard
@@ -67,8 +68,8 @@ fun LoginScreen(
     val state by authViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf(if (BuildConfig.DEMO_MODE) "demo" else "") }
+    var password by remember { mutableStateOf(if (BuildConfig.DEMO_MODE) "123456" else "") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isLoggedIn) {
@@ -114,7 +115,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "发现身边的猫咪",
+                text = if (BuildConfig.DEMO_MODE) "演示模式已启用，可直接登录" else "发现身边的猫咪",
                 style = MaterialTheme.typography.bodyLarge,
                 color = TextGray,
             )

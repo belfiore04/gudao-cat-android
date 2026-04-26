@@ -23,17 +23,25 @@ import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.gudaocat.app.data.mock.MockData
+import com.gudaocat.app.data.model.Cat
+import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
@@ -43,6 +51,8 @@ import com.gudaocat.app.ui.theme.TextGray
 
 @Composable
 fun RecognizeScreen() {
+    var isRecognizing by remember { mutableStateOf(false) }
+    var recognizedCat by remember { mutableStateOf<Cat?>(null) }
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulse by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -50,6 +60,14 @@ fun RecognizeScreen() {
         animationSpec = infiniteRepeatable(tween(1200), RepeatMode.Reverse),
         label = "pulse",
     )
+
+    LaunchedEffect(isRecognizing) {
+        if (isRecognizing) {
+            kotlinx.coroutines.delay(900)
+            recognizedCat = MockData.recognizedCat
+            isRecognizing = false
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -93,7 +111,10 @@ fun RecognizeScreen() {
 
             // 按钮
             IconButton(
-                onClick = { /* TODO: 打开相机 */ },
+                onClick = {
+                    recognizedCat = null
+                    isRecognizing = true
+                },
                 modifier = Modifier
                     .size(120.dp)
                     .background(
@@ -112,9 +133,48 @@ fun RecognizeScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        if (isRecognizing) {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = DarkCardLight),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CircularProgressIndicator(color = Orange)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "正在检测、分割并匹配猫咪档案...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextGray,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        recognizedCat?.let { cat ->
+            Text(
+                text = "识别结果：匹配度 92%",
+                style = MaterialTheme.typography.titleMedium,
+                color = Orange,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            CatCard(cat = cat)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         // 从相册选择
         Card(
-            onClick = { /* TODO: 打开相册 */ },
+            onClick = {
+                recognizedCat = null
+                isRecognizing = true
+            },
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = DarkCardLight),
             modifier = Modifier.fillMaxWidth(),

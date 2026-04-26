@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,7 +43,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.gudaocat.app.data.model.Cat
+import com.gudaocat.app.data.mock.MockData
 import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCard
@@ -56,14 +55,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen() {
-    // Mock 数据，后面替换为真实 API
-    val mockCats = remember {
-        listOf(
-            Cat(id = 1, name = "橘座大人", habits = "每天下午3点准时出现在食堂门口，喜欢被摸下巴", location = "图书馆旁花坛"),
-            Cat(id = 2, name = "小黑炭", habits = "怕生但会偷偷跟着你走，最爱吃罐头", location = "操场看台下"),
-            Cat(id = 3, name = "奶牛猫", habits = "社牛本牛，见人就翻肚皮", location = "教学楼 B 座"),
-        )
-    }
+    val cats = remember { MockData.cats }
 
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
@@ -149,7 +141,7 @@ fun HomeScreen() {
                 )
             }
 
-            itemsIndexed(mockCats) { index, cat ->
+            itemsIndexed(cats) { index, cat ->
                 var itemVisible by remember { mutableStateOf(false) }
                 LaunchedEffect(visible) {
                     delay(index * 100L)

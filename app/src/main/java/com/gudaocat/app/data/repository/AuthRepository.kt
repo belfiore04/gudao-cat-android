@@ -1,7 +1,9 @@
 package com.gudaocat.app.data.repository
 
+import com.gudaocat.app.BuildConfig
 import com.gudaocat.app.data.api.ApiService
 import com.gudaocat.app.data.api.TokenProvider
+import com.gudaocat.app.data.mock.MockData
 import com.gudaocat.app.data.model.LoginRequest
 import com.gudaocat.app.data.model.RegisterRequest
 import com.gudaocat.app.data.model.User
@@ -14,6 +16,11 @@ class AuthRepository @Inject constructor(
     private val tokenProvider: TokenProvider,
 ) {
     suspend fun login(username: String, password: String): Result<User> {
+        if (BuildConfig.DEMO_MODE) {
+            tokenProvider.saveToken(MockData.demoToken)
+            return Result.success(MockData.currentUser)
+        }
+
         return try {
             val token = api.login(LoginRequest(username, password))
             tokenProvider.saveToken(token.access_token)
@@ -25,6 +32,15 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun register(username: String, password: String): Result<User> {
+        if (BuildConfig.DEMO_MODE) {
+            tokenProvider.saveToken(MockData.demoToken)
+            return Result.success(
+                MockData.currentUser.copy(
+                    username = username.ifBlank { MockData.currentUser.username },
+                )
+            )
+        }
+
         return try {
             api.register(RegisterRequest(username, password))
             // 注册成功后自动登录
@@ -37,6 +53,10 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun getMe(): Result<User> {
+        if (BuildConfig.DEMO_MODE) {
+            return Result.success(MockData.currentUser)
+        }
+
         return try {
             Result.success(api.getMe())
         } catch (e: Exception) {
@@ -49,6 +69,10 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun isLoggedIn(): Boolean {
+        if (BuildConfig.DEMO_MODE) {
+            return tokenProvider.getToken() != null
+        }
+
         return tokenProvider.getToken() != null
     }
 }
