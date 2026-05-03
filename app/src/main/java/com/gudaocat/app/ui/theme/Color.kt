@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 val Orange = Color(0xFFFF6D00)
 val OrangeLight = Color(0xFFFF9E40)
 val OrangeDark = Color(0xFFE65100)
+val CatOrange = Orange
 
 // 强调色 — 柔粉
 val Pink = Color(0xFFFFB4A2)
