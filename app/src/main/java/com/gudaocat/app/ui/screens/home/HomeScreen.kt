@@ -54,7 +54,9 @@ import com.gudaocat.app.ui.theme.TextGray
 import kotlinx.coroutines.delay
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onCatClick: (Int) -> Unit = {},
+) {
     val cats = remember { MockData.cats }
 
     var visible by remember { mutableStateOf(false) }
@@ -151,7 +153,10 @@ fun HomeScreen() {
                     visible = itemVisible,
                     enter = fadeIn() + slideInVertically { it / 2 },
                 ) {
-                    CatCard(cat = cat)
+                    CatCard(
+                        cat = cat,
+                        onClick = { onCatClick(cat.id) },
+                    )
                 }
             }
 

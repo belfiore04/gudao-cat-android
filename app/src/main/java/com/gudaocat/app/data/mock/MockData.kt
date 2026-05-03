@@ -11,6 +11,25 @@ object MockData {
         bio = "今天也在校园里认真记录每一只猫",
     )
 
+    val users = listOf(
+        currentUser,
+        User(
+            id = 1002,
+            username = "图书馆投喂员",
+            bio = "负责记录图书馆和操场附近的猫咪动态。",
+        ),
+        User(
+            id = 1003,
+            username = "B座巡逻员",
+            bio = "每天路过教学楼都会看看猫咪有没有出现。",
+        ),
+        User(
+            id = 1004,
+            username = "南区猫友",
+            bio = "关注食堂后门和宿舍区的猫咪。",
+        ),
+    )
+
     val cats = listOf(
         Cat(
             id = 1,
@@ -86,6 +105,16 @@ object MockData {
     )
 
     val recognizedCat = cats.first()
+
+    fun catById(id: Int): Cat? = cats.firstOrNull { it.id == id }
+
+    fun postById(id: Int): Post? = posts.firstOrNull { it.id == id }
+
+    fun userById(id: Int): User? = users.firstOrNull { it.id == id }
+
+    fun catsByCreator(userId: Int): List<Cat> = cats.filter { it.creator_id == userId }
+
+    fun postsByUser(userId: Int): List<Post> = posts.filter { it.user_id == userId }
 
     const val demoToken = "demo-token"
     const val followingCount = 12

@@ -26,15 +26,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.gudaocat.app.ui.screens.auth.LoginScreen
+import com.gudaocat.app.ui.screens.cat.CatDetailScreen
 import com.gudaocat.app.ui.screens.auth.RegisterScreen
 import com.gudaocat.app.ui.screens.community.CommunityScreen
+import com.gudaocat.app.ui.screens.community.PostDetailScreen
 import com.gudaocat.app.ui.screens.home.HomeScreen
 import com.gudaocat.app.ui.screens.profile.ProfileScreen
+import com.gudaocat.app.ui.screens.profile.UserProfileScreen
 import com.gudaocat.app.ui.screens.recognize.RecognizeScreen
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkSurface
@@ -49,6 +54,15 @@ sealed class Screen(val route: String) {
     object Recognize : Screen("recognize")
     object Community : Screen("community")
     object Profile : Screen("profile")
+    object CatDetail : Screen("cat/{catId}") {
+        fun createRoute(catId: Int) = "cat/$catId"
+    }
+    object PostDetail : Screen("post/{postId}") {
+        fun createRoute(postId: Int) = "post/$postId"
+    }
+    object UserProfile : Screen("user/{userId}") {
+        fun createRoute(userId: Int) = "user/$userId"
+    }
 }
 
 data class BottomNavItem(
@@ -166,9 +180,30 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                     },
                 )
             }
-            composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.Recognize.route) { RecognizeScreen() }
-            composable(Screen.Community.route) { CommunityScreen() }
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    onCatClick = { catId ->
+                        navController.navigate(Screen.CatDetail.createRoute(catId))
+                    },
+                )
+            }
+            composable(Screen.Recognize.route) {
+                RecognizeScreen(
+                    onCatClick = { catId ->
+                        navController.navigate(Screen.CatDetail.createRoute(catId))
+                    },
+                )
+            }
+            composable(Screen.Community.route) {
+                CommunityScreen(
+                    onPostClick = { postId ->
+                        navController.navigate(Screen.PostDetail.createRoute(postId))
+                    },
+                    onAuthorClick = { userId ->
+                        navController.navigate(Screen.UserProfile.createRoute(userId))
+                    },
+                )
+            }
             composable(Screen.Profile.route) {
                 ProfileScreen(
                     authViewModel = authViewModel,
@@ -176,6 +211,45 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                         navController.navigate(Screen.Login.route) {
                             popUpTo(0) { inclusive = true }
                         }
+                    },
+                )
+            }
+            composable(
+                route = Screen.CatDetail.route,
+                arguments = listOf(navArgument("catId") { type = NavType.IntType }),
+            ) { entry ->
+                CatDetailScreen(
+                    catId = entry.arguments?.getInt("catId") ?: -1,
+                    onBack = { navController.popBackStack() },
+                    onCreatorClick = { userId ->
+                        navController.navigate(Screen.UserProfile.createRoute(userId))
+                    },
+                )
+            }
+            composable(
+                route = Screen.PostDetail.route,
+                arguments = listOf(navArgument("postId") { type = NavType.IntType }),
+            ) { entry ->
+                PostDetailScreen(
+                    postId = entry.arguments?.getInt("postId") ?: -1,
+                    onBack = { navController.popBackStack() },
+                    onAuthorClick = { userId ->
+                        navController.navigate(Screen.UserProfile.createRoute(userId))
+                    },
+                )
+            }
+            composable(
+                route = Screen.UserProfile.route,
+                arguments = listOf(navArgument("userId") { type = NavType.IntType }),
+            ) { entry ->
+                UserProfileScreen(
+                    userId = entry.arguments?.getInt("userId") ?: -1,
+                    onBack = { navController.popBackStack() },
+                    onCatClick = { catId ->
+                        navController.navigate(Screen.CatDetail.createRoute(catId))
+                    },
+                    onPostClick = { postId ->
+                        navController.navigate(Screen.PostDetail.createRoute(postId))
                     },
                 )
             }

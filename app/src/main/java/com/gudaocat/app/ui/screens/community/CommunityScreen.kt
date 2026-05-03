@@ -34,6 +34,7 @@ import com.gudaocat.app.ui.theme.TextGray
 
 @Composable
 fun CommunityScreen(
+    onPostClick: (Int) -> Unit = {},
     onAuthorClick: (Int) -> Unit = {},
 ) {
     val posts = remember { MockData.posts }
@@ -83,6 +84,9 @@ fun CommunityScreen(
                 items(posts) { post ->
                     PostCard(
                         post = post,
+                        authorName = MockData.userById(post.user_id)?.username ?: "校园观察员",
+                        authorAvatar = MockData.userById(post.user_id)?.avatar,
+                        onClick = { onPostClick(post.id) },
                         onAuthorClick = onAuthorClick,
                     )
                 }
