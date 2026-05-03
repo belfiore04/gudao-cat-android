@@ -38,6 +38,7 @@ import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.OrangeLight
 import com.gudaocat.app.ui.theme.Pink
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.ui.utils.rememberImageModel
 
 @Composable
 fun PostDetailScreen(
@@ -46,6 +47,7 @@ fun PostDetailScreen(
     onAuthorClick: (Int) -> Unit = {},
 ) {
     val post = MockData.postById(postId)
+    val postImageModel = rememberImageModel(post?.images?.firstOrNull())
 
     LazyColumn(
         modifier = Modifier
@@ -132,10 +134,10 @@ fun PostDetailScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                     )
 
-                    if (!post.images.isNullOrEmpty()) {
+                    if (postImageModel != null) {
                         Spacer(modifier = Modifier.height(16.dp))
                         AsyncImage(
-                            model = post.images.first(),
+                            model = postImageModel,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier

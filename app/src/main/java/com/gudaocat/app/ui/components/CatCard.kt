@@ -31,6 +31,7 @@ import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.ui.utils.rememberImageModel
 
 @Composable
 fun CatCard(
@@ -38,6 +39,8 @@ fun CatCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val photoModel = rememberImageModel(cat.photos?.firstOrNull())
+
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
@@ -47,9 +50,9 @@ fun CatCard(
     ) {
         Column {
             // 猫咪照片
-            if (!cat.photos.isNullOrEmpty()) {
+            if (photoModel != null) {
                 AsyncImage(
-                    model = cat.photos.first(),
+                    model = photoModel,
                     contentDescription = cat.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

@@ -38,6 +38,7 @@ import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.OrangeLight
 import com.gudaocat.app.ui.theme.Pink
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.ui.utils.rememberImageModel
 
 @Composable
 fun CatDetailScreen(
@@ -46,6 +47,7 @@ fun CatDetailScreen(
     onCreatorClick: (Int) -> Unit = {},
 ) {
     val cat = MockData.catById(catId)
+    val photoModel = rememberImageModel(cat?.photos?.firstOrNull())
 
     LazyColumn(
         modifier = Modifier
@@ -81,9 +83,9 @@ fun CatDetailScreen(
             }
         } else {
             item {
-                if (!cat.photos.isNullOrEmpty()) {
+                if (photoModel != null) {
                     AsyncImage(
-                        model = cat.photos.first(),
+                        model = photoModel,
                         contentDescription = cat.name,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

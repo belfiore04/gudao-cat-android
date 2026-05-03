@@ -35,6 +35,7 @@ import com.gudaocat.app.data.model.Post
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.ui.utils.rememberImageModel
 
 @Composable
 fun PostCard(
@@ -45,6 +46,9 @@ fun PostCard(
     onClick: () -> Unit = {},
     onAuthorClick: (Int) -> Unit = {},
 ) {
+    val authorAvatarModel = rememberImageModel(authorAvatar)
+    val postImageModel = rememberImageModel(post.images?.firstOrNull())
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -61,9 +65,9 @@ fun PostCard(
                         .clickable { onAuthorClick(post.user_id) },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (!authorAvatar.isNullOrBlank()) {
+                    if (authorAvatarModel != null) {
                         AsyncImage(
-                            model = authorAvatar,
+                            model = authorAvatarModel,
                             contentDescription = authorName,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -108,10 +112,10 @@ fun PostCard(
             )
 
             // 图片
-            if (!post.images.isNullOrEmpty()) {
+            if (postImageModel != null) {
                 Spacer(modifier = Modifier.height(12.dp))
                 AsyncImage(
-                    model = post.images.first(),
+                    model = postImageModel,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
