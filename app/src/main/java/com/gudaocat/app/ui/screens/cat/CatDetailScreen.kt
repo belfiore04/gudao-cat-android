@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -163,7 +162,11 @@ fun CatDetailScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Icon(Icons.Rounded.Person, contentDescription = null, tint = Color.White)
+                                Icon(
+                                    Icons.Rounded.Person,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {

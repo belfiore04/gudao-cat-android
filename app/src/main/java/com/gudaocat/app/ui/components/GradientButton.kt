@@ -21,9 +21,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.OrangeLight
 import com.gudaocat.app.ui.theme.Pink
+import com.gudaocat.app.ui.theme.TextGray
 
 @Composable
 fun GradientButton(
@@ -46,7 +48,7 @@ fun GradientButton(
                 brush = if (enabled) {
                     Brush.horizontalGradient(listOf(Orange, OrangeLight, Pink))
                 } else {
-                    Brush.horizontalGradient(listOf(Orange.copy(0.3f), Pink.copy(0.3f)))
+                    Brush.horizontalGradient(listOf(DarkCardLight, DarkCardLight))
                 }
             )
             .clickable(
@@ -60,7 +62,7 @@ fun GradientButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else TextGray,
         )
     }
 }

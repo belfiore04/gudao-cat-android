@@ -11,9 +11,9 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = Orange,
-    onPrimary = TextWhite,
+    onPrimary = OnOrange,
     primaryContainer = OrangeDark,
-    onPrimaryContainer = OrangeLight,
+    onPrimaryContainer = OnOrange,
     secondary = Pink,
     onSecondary = DarkBg,
     secondaryContainer = PinkLight,
@@ -25,7 +25,7 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = TextGray,
     error = Error,
     onError = TextWhite,
-    outline = TextDim,
+    outline = TextGray,
 )
 
 @Composable

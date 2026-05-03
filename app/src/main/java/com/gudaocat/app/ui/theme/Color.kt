@@ -18,9 +18,10 @@ val DarkCard = Color(0xFF16213E)
 val DarkCardLight = Color(0xFF1E2A4A)
 
 // 文字
-val TextWhite = Color(0xFFF0F0F0)
-val TextGray = Color(0xFF8E8E9A)
-val TextDim = Color(0xFF5C5C6E)
+val TextWhite = Color(0xFFFAFAFF)
+val TextGray = Color(0xFFC8CAD8)
+val TextDim = Color(0xFFA4A7BA)
+val OnOrange = Color(0xFF241205)
 
 // 功能色
 val Success = Color(0xFF4CAF50)

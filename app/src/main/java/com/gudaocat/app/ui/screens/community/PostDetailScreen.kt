@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -106,7 +105,7 @@ fun PostDetailScreen(
                                 Text(
                                     text = author?.username?.firstOrNull()?.uppercase() ?: "?",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
