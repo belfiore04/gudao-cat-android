@@ -1,5 +1,6 @@
 package com.gudaocat.app.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,9 +36,12 @@ import com.gudaocat.app.ui.theme.TextGray
 fun PostCard(
     post: Post,
     modifier: Modifier = Modifier,
+    onAuthorClick: (Int) -> Unit = {},
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onAuthorClick(post.user_id) },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = DarkCardLight),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),

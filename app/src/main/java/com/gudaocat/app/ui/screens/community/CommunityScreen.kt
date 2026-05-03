@@ -33,7 +33,9 @@ import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextGray
 
 @Composable
-fun CommunityScreen() {
+fun CommunityScreen(
+    onAuthorClick: (Int) -> Unit = {},
+) {
     val posts = remember { MockData.posts }
 
     Scaffold(
@@ -79,7 +81,10 @@ fun CommunityScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(posts) { post ->
-                    PostCard(post = post)
+                    PostCard(
+                        post = post,
+                        onAuthorClick = onAuthorClick,
+                    )
                 }
                 item { Spacer(modifier = Modifier.height(80.dp)) }
             }

@@ -1,6 +1,5 @@
 package com.gudaocat.app.ui.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,10 +17,12 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -39,16 +40,15 @@ import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkSurface
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextDim
-import com.gudaocat.app.ui.theme.TextGray
 import com.gudaocat.app.viewmodel.AuthViewModel
 
 sealed class Screen(val route: String) {
-    data object Login : Screen("login")
-    data object Register : Screen("register")
-    data object Home : Screen("home")
-    data object Recognize : Screen("recognize")
-    data object Community : Screen("community")
-    data object Profile : Screen("profile")
+    object Login : Screen("login")
+    object Register : Screen("register")
+    object Home : Screen("home")
+    object Recognize : Screen("recognize")
+    object Community : Screen("community")
+    object Profile : Screen("profile")
 }
 
 data class BottomNavItem(
@@ -75,13 +75,30 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
     val currentRoute = navBackStackEntry?.destination?.route
     val showBottomBar = currentRoute in bottomNavItems.map { it.screen.route }
 
+    LaunchedEffect(authState.isLoggedIn, currentRoute) {
+        when {
+            authState.isLoggedIn && currentRoute in listOf(Screen.Login.route, Screen.Register.route) -> {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            !authState.isLoggedIn && currentRoute in bottomNavItems.map { it.screen.route } -> {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
     Scaffold(
         containerColor = DarkBg,
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar(
                     containerColor = DarkSurface,
-                    tonalElevation = androidx.compose.ui.unit.dp.times(0),
+                    tonalElevation = 0.dp,
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = navBackStackEntry?.destination?.hierarchy?.any {
