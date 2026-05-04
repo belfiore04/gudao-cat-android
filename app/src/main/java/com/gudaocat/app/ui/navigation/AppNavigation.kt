@@ -236,6 +236,9 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                     onAuthorClick = { userId ->
                         navController.navigate(Screen.UserProfile.createRoute(userId))
                     },
+                    onCatClick = { catId ->
+                        navController.navigate(Screen.CatDetail.createRoute(catId))
+                    },
                 )
             }
             composable(

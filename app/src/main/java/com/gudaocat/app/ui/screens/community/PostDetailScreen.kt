@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Pets
+import androidx.compose.material.icons.rounded.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.gudaocat.app.data.mock.MockData
+import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
@@ -45,6 +48,7 @@ fun PostDetailScreen(
     postId: Int,
     onBack: () -> Unit,
     onAuthorClick: (Int) -> Unit = {},
+    onCatClick: (Int) -> Unit = {},
 ) {
     val post = MockData.postById(postId)
     val postImageModel = rememberImageModel(post?.images?.firstOrNull())
@@ -85,6 +89,7 @@ fun PostDetailScreen(
             item {
                 Column(modifier = Modifier.padding(20.dp)) {
                     val author = MockData.userById(post.user_id)
+                    val relatedCat = post.cat_id?.let { MockData.catById(it) }
                     Card(
                         onClick = { onAuthorClick(post.user_id) },
                         shape = RoundedCornerShape(22.dp),
@@ -134,6 +139,14 @@ fun PostDetailScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                     )
 
+                    relatedCat?.let { cat ->
+                        Spacer(modifier = Modifier.height(14.dp))
+                        RelatedCatTag(
+                            cat = cat,
+                            onClick = { onCatClick(cat.id) },
+                        )
+                    }
+
                     if (postImageModel != null) {
                         Spacer(modifier = Modifier.height(16.dp))
                         AsyncImage(
@@ -160,6 +173,60 @@ fun PostDetailScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RelatedCatTag(
+    cat: Cat,
+    onClick: () -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = DarkCardLight),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Rounded.Pets,
+                contentDescription = null,
+                tint = Orange,
+                modifier = Modifier.size(22.dp),
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = cat.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                if (cat.location != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Rounded.Place,
+                            contentDescription = null,
+                            tint = TextGray,
+                            modifier = Modifier.size(14.dp),
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = cat.location,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextGray,
+                        )
+                    }
+                }
+            }
+            Text(
+                text = "查看档案",
+                style = MaterialTheme.typography.labelMedium,
+                color = Orange,
+            )
         }
     }
 }

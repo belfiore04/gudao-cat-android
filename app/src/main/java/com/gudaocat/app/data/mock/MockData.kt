@@ -82,6 +82,7 @@ object MockData {
         Post(
             id = 1,
             user_id = 1002,
+            cat_id = 1,
             content = "今天在图书馆东侧遇到橘座大人，状态很好，已经补充了干粮和清水。",
             images = listOf("drawable/post_library_juzuo"),
             like_count = 42,
@@ -90,6 +91,7 @@ object MockData {
         Post(
             id = 2,
             user_id = 1003,
+            cat_id = 2,
             content = "操场的小黑炭今天终于愿意靠近一点了，建议大家慢慢接触，不要突然伸手。",
             images = listOf("drawable/post_playground_xiaoheitan"),
             like_count = 128,
@@ -98,6 +100,7 @@ object MockData {
         Post(
             id = 3,
             user_id = 1001,
+            cat_id = 3,
             content = "B 座门口的奶牛猫又在拦路撒娇，已确认精神状态正常。",
             images = listOf("drawable/post_building_nainiucat"),
             like_count = 67,
@@ -106,6 +109,7 @@ object MockData {
         Post(
             id = 4,
             user_id = 1004,
+            cat_id = 1,
             content = "南区食堂后门新发现一只疑似未建档的小橘猫，已经拍照记录，准备补充档案。",
             images = listOf("drawable/post_canteen_orange"),
             like_count = 31,
