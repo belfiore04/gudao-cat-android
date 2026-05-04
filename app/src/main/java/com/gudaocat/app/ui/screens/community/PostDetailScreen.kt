@@ -89,7 +89,7 @@ fun PostDetailScreen(
             item {
                 Column(modifier = Modifier.padding(20.dp)) {
                     val author = MockData.userById(post.user_id)
-                    val relatedCat = post.cat_id?.let { MockData.catById(it) }
+                    val relatedCat = MockData.catForPost(post.id)
                     Card(
                         onClick = { onAuthorClick(post.user_id) },
                         shape = RoundedCornerShape(22.dp),

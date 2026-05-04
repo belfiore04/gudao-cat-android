@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 data class Post(
     val id: Int,
     val user_id: Int,
-    val cat_id: Int? = null,
     val content: String,
     val images: List<String>? = null,
     val video: String? = null,
