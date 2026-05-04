@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gudaocat.app.ui.screens.auth.LoginScreen
 import com.gudaocat.app.ui.screens.cat.CatDetailScreen
+import com.gudaocat.app.ui.screens.cat.CreateCatScreen
 import com.gudaocat.app.ui.screens.auth.RegisterScreen
 import com.gudaocat.app.ui.screens.community.CommunityScreen
 import com.gudaocat.app.ui.screens.community.PostDetailScreen
@@ -54,6 +55,7 @@ sealed class Screen(val route: String) {
     object Recognize : Screen("recognize")
     object Community : Screen("community")
     object Profile : Screen("profile")
+    object CreateCat : Screen("cat/create")
     object CatDetail : Screen("cat/{catId}") {
         fun createRoute(catId: Int) = "cat/$catId"
     }
@@ -192,6 +194,9 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                     onCatClick = { catId ->
                         navController.navigate(Screen.CatDetail.createRoute(catId))
                     },
+                    onCreateCatClick = {
+                        navController.navigate(Screen.CreateCat.route)
+                    },
                 )
             }
             composable(Screen.Community.route) {
@@ -212,6 +217,12 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                             popUpTo(0) { inclusive = true }
                         }
                     },
+                )
+            }
+            composable(Screen.CreateCat.route) {
+                CreateCatScreen(
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack(Screen.Home.route, inclusive = false) },
                 )
             }
             composable(

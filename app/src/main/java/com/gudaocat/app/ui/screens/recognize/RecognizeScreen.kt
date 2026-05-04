@@ -89,6 +89,7 @@ private enum class RecognitionStep {
 @Composable
 fun RecognizeScreen(
     onCatClick: (Int) -> Unit = {},
+    onCreateCatClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     var step by remember { mutableStateOf(RecognitionStep.Camera) }
@@ -219,7 +220,7 @@ fun RecognizeScreen(
                     }
                 }
                 RecognitionStep.Unknown -> {
-                    UnknownResult()
+                    UnknownResult(onCreateCatClick = onCreateCatClick)
                 }
                 else -> Unit
             }
@@ -514,7 +515,9 @@ private fun MatchedResult(
 }
 
 @Composable
-private fun UnknownResult() {
+private fun UnknownResult(
+    onCreateCatClick: () -> Unit,
+) {
     Card(
         shape = RoundedCornerShape(22.dp),
         colors = CardDefaults.cardColors(containerColor = DarkCardLight),
@@ -538,7 +541,7 @@ private fun UnknownResult() {
             )
             Spacer(modifier = Modifier.height(14.dp))
             Card(
-                onClick = { },
+                onClick = onCreateCatClick,
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(containerColor = Orange),
             ) {
