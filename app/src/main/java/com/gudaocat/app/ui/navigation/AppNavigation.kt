@@ -177,6 +177,7 @@ fun AppNavigation(
                         navController.navigate(Screen.Register.route)
                     },
                     onLoginSuccess = {
+                        catViewModel.loadCats()
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
@@ -188,6 +189,7 @@ fun AppNavigation(
                     authViewModel = authViewModel,
                     onNavigateToLogin = { navController.popBackStack() },
                     onRegisterSuccess = {
+                        catViewModel.loadCats()
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
