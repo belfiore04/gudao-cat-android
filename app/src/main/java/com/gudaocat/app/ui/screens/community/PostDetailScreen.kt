@@ -169,8 +169,9 @@ fun PostDetailScreen(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Rounded.FavoriteBorder, contentDescription = "点赞", tint = Orange)
-                        Spacer(modifier = Modifier.width(6.dp))
+                        IconButton(onClick = { viewModel.toggleLike(post.id) }) {
+                            Icon(Icons.Rounded.FavoriteBorder, contentDescription = "点赞", tint = Orange)
+                        }
                         Text("${post.like_count}", color = TextGray)
                         Spacer(modifier = Modifier.width(20.dp))
                         Icon(Icons.Rounded.ChatBubbleOutline, contentDescription = "评论", tint = TextGray)
@@ -179,6 +180,29 @@ fun PostDetailScreen(
                     }
 
                     Spacer(modifier = Modifier.height(18.dp))
+
+                    post.cat_id?.let { catId ->
+                        Card(
+                            onClick = { onCatClick(catId) },
+                            shape = RoundedCornerShape(18.dp),
+                            colors = CardDefaults.cardColors(containerColor = DarkCardLight),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(Icons.Rounded.Pets, contentDescription = null, tint = Orange)
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "查看关联猫咪 #$catId",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(18.dp))
+                    }
 
                     Text(
                         text = "评论",

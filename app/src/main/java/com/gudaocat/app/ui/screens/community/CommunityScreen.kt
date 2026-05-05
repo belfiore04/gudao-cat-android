@@ -121,6 +121,7 @@ fun CommunityScreen(
                         authorAvatar = null,
                         onClick = { onPostClick(post.id) },
                         onAuthorClick = onAuthorClick,
+                        onLikeClick = viewModel::toggleLike,
                     )
                 }
                 item { Spacer(modifier = Modifier.height(80.dp)) }

@@ -149,6 +149,7 @@ fun UserProfileScreen(
                     authorName = user?.username,
                     authorAvatar = user?.avatar,
                     onClick = { onPostClick(post.id) },
+                    onLikeClick = {},
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
                 )
             }

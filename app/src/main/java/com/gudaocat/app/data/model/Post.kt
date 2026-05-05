@@ -7,6 +7,7 @@ import kotlinx.serialization.json.JsonElement
 data class Post(
     val id: Int,
     val user_id: Int,
+    val cat_id: Int? = null,
     val content: String,
     val images: List<String>? = null,
     val video: String? = null,
@@ -17,8 +18,14 @@ data class Post(
 @Serializable
 data class PostCreateRequest(
     val content: String,
+    val cat_id: Int? = null,
     val images: List<String>? = null,
     val video: String? = null,
+)
+
+@Serializable
+data class UploadResponse(
+    val url: String,
 )
 
 @Serializable

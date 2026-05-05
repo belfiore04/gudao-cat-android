@@ -3,13 +3,19 @@ package com.gudaocat.app.ui.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Forum
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -67,6 +73,9 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile")
     object CreateCat : Screen("cat/create")
     object CreatePost : Screen("post/create")
+    object MyLikes : Screen("profile/likes")
+    object EditProfile : Screen("profile/edit")
+    object Settings : Screen("profile/settings")
     object CatDetail : Screen("cat/{catId}") {
         fun createRoute(catId: Int) = "cat/$catId"
     }
@@ -107,6 +116,7 @@ fun AppNavigation() {
         factory = RecognitionViewModelFactory(container.recognitionRepository),
     )
     val authState by authViewModel.state.collectAsState()
+    val catState by catViewModel.state.collectAsState()
     val navController = rememberNavController()
 
     val startDestination = if (authState.isLoggedIn) Screen.Home.route else Screen.Login.route
@@ -250,6 +260,21 @@ fun AppNavigation() {
             composable(Screen.Profile.route) {
                 ProfileScreen(
                     authViewModel = authViewModel,
+                    onMyCatsClick = { userId ->
+                        navController.navigate(Screen.UserProfile.createRoute(userId))
+                    },
+                    onMyPostsClick = { userId ->
+                        navController.navigate(Screen.UserProfile.createRoute(userId))
+                    },
+                    onMyLikesClick = {
+                        navController.navigate(Screen.MyLikes.route)
+                    },
+                    onEditProfileClick = {
+                        navController.navigate(Screen.EditProfile.route)
+                    },
+                    onSettingsClick = {
+                        navController.navigate(Screen.Settings.route)
+                    },
                     onLogout = {
                         navController.navigate(Screen.Login.route) {
                             popUpTo(0) { inclusive = true }
@@ -277,7 +302,17 @@ fun AppNavigation() {
                         }
                     },
                     viewModel = communityViewModel,
+                    cats = catState.cats,
                 )
+            }
+            composable(Screen.MyLikes.route) {
+                PlaceholderScreen(title = "我的点赞", onBack = { navController.popBackStack() })
+            }
+            composable(Screen.EditProfile.route) {
+                PlaceholderScreen(title = "编辑资料", onBack = { navController.popBackStack() })
+            }
+            composable(Screen.Settings.route) {
+                PlaceholderScreen(title = "设置", onBack = { navController.popBackStack() })
             }
             composable(
                 route = Screen.CatDetail.route,
@@ -325,5 +360,30 @@ fun AppNavigation() {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun PlaceholderScreen(title: String, onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
+    ) {
+        IconButton(onClick = onBack) {
+            Icon(Icons.Rounded.ArrowBack, contentDescription = "返回")
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "这个功能还没有接入后端，后续可以继续补齐。",
+            style = MaterialTheme.typography.bodyLarge,
+            color = TextDim,
+        )
     }
 }

@@ -45,6 +45,7 @@ fun PostCard(
     authorAvatar: String? = null,
     onClick: () -> Unit = {},
     onAuthorClick: (Int) -> Unit = {},
+    onLikeClick: (Int) -> Unit = {},
 ) {
     val authorAvatarModel = rememberImageModel(authorAvatar)
     val postImageModel = rememberImageModel(post.images?.firstOrNull())
@@ -111,6 +112,15 @@ fun PostCard(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
+            post.cat_id?.let { catId ->
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "关联猫咪 #$catId",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Orange,
+                )
+            }
+
             // 图片
             if (postImageModel != null) {
                 Spacer(modifier = Modifier.height(12.dp))
@@ -133,7 +143,7 @@ fun PostCard(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = { /* TODO */ }, modifier = Modifier.size(36.dp)) {
+                IconButton(onClick = { onLikeClick(post.id) }, modifier = Modifier.size(36.dp)) {
                     Icon(
                         Icons.Rounded.FavoriteBorder,
                         contentDescription = "点赞",

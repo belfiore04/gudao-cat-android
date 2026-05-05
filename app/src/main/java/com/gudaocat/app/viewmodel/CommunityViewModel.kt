@@ -1,5 +1,7 @@
 package com.gudaocat.app.viewmodel
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gudaocat.app.data.model.Cat
@@ -14,6 +16,7 @@ import kotlinx.coroutines.launch
 
 data class CommunityState(
     val isLoading: Boolean = false,
+    val isPosting: Boolean = false,
     val posts: List<Post> = emptyList(),
     val selectedPost: Post? = null,
     val comments: List<Comment> = emptyList(),
@@ -38,16 +41,48 @@ class CommunityViewModel(
         }
     }
 
-    fun createPost(content: String, onSaved: () -> Unit) {
+    fun createPost(
+        context: Context,
+        content: String,
+        catId: Int?,
+        imageUri: Uri?,
+        onSaved: () -> Unit,
+    ) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
-            repository.createPost(content)
+            _state.value = _state.value.copy(isPosting = true, error = null)
+            val imageUrls = if (imageUri != null) {
+                val uploaded = repository.uploadImage(context, imageUri)
+                val url = uploaded.getOrElse { error ->
+                    _state.value = _state.value.copy(isPosting = false, error = error.message)
+                    return@launch
+                }
+                listOf(url)
+            } else {
+                emptyList()
+            }
+
+            repository.createPost(content, catId, imageUrls)
                 .onSuccess {
-                    _state.value = _state.value.copy(isLoading = false)
+                    _state.value = _state.value.copy(isPosting = false)
                     loadPosts()
                     onSaved()
                 }
-                .onFailure { error -> _state.value = _state.value.copy(isLoading = false, error = error.message) }
+                .onFailure { error -> _state.value = _state.value.copy(isPosting = false, error = error.message) }
+        }
+    }
+
+    fun toggleLike(postId: Int) {
+        viewModelScope.launch {
+            repository.toggleLike(postId)
+                .onSuccess { updated ->
+                    _state.value = _state.value.copy(
+                        posts = _state.value.posts.map { if (it.id == updated.id) updated else it },
+                        selectedPost = _state.value.selectedPost?.let {
+                            if (it.id == updated.id) updated else it
+                        },
+                    )
+                }
+                .onFailure { error -> _state.value = _state.value.copy(error = error.message) }
         }
     }
 

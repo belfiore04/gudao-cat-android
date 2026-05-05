@@ -10,6 +10,7 @@ import com.gudaocat.app.data.model.PostCreateRequest
 import com.gudaocat.app.data.model.RecognitionJob
 import com.gudaocat.app.data.model.RegisterRequest
 import com.gudaocat.app.data.model.TokenResponse
+import com.gudaocat.app.data.model.UploadResponse
 import com.gudaocat.app.data.model.User
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -55,11 +56,18 @@ interface ApiService {
     @POST("api/posts/")
     suspend fun createPost(@Body request: PostCreateRequest): Post
 
+    @POST("api/posts/{postId}/like")
+    suspend fun togglePostLike(@Path("postId") postId: Int): Post
+
     @GET("api/posts/{postId}")
     suspend fun getPost(@Path("postId") postId: Int): Post
 
     @GET("api/posts/{postId}/comments")
     suspend fun getComments(@Path("postId") postId: Int): List<Comment>
+
+    @Multipart
+    @POST("api/uploads/images")
+    suspend fun uploadImage(@Part image: MultipartBody.Part): UploadResponse
 
     @POST("api/posts/{postId}/comments")
     suspend fun createComment(

@@ -21,7 +21,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -226,6 +225,9 @@ fun RecognizeScreen(
             Spacer(modifier = Modifier.height(18.dp))
 
             when (step) {
+                RecognitionStep.Analyzing -> {
+                    AnalyzingResult()
+                }
                 RecognitionStep.Matched -> {
                     recognizedCat?.let { cat ->
                         MatchedResult(
@@ -242,10 +244,6 @@ fun RecognizeScreen(
             }
 
             Spacer(modifier = Modifier.weight(1f))
-        }
-
-        if (step == RecognitionStep.Analyzing) {
-            LoadingOverlay()
         }
     }
 }
@@ -579,38 +577,27 @@ private fun UnknownResult(
 }
 
 @Composable
-private fun LoadingOverlay() {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.62f))
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = {},
-            ),
-        contentAlignment = Alignment.Center,
+private fun AnalyzingResult() {
+    Card(
+        shape = RoundedCornerShape(22.dp),
+        colors = CardDefaults.cardColors(containerColor = DarkCardLight),
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Card(
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = DarkCardLight),
+        Row(
+            modifier = Modifier.padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 28.dp, vertical = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                CircularProgressIndicator(color = Orange)
-                Spacer(modifier = Modifier.height(14.dp))
+            CircularProgressIndicator(color = Orange, modifier = Modifier.size(28.dp))
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
                 Text(
-                    text = "正在上传并识别猫咪...",
+                    text = "识别任务已提交",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "请稍候，识别过程中无法重复操作",
+                    text = "可以切换到其他页面，结果会在这里自动更新。",
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextGray,
                 )

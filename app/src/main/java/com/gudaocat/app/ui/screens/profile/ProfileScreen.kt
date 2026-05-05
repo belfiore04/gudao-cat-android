@@ -50,6 +50,11 @@ import com.gudaocat.app.viewmodel.AuthViewModel
 @Composable
 fun ProfileScreen(
     authViewModel: AuthViewModel,
+    onMyCatsClick: (Int) -> Unit,
+    onMyPostsClick: (Int) -> Unit,
+    onMyLikesClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onLogout: () -> Unit,
 ) {
     val state by authViewModel.state.collectAsState()
@@ -122,11 +127,19 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // 功能列表
-        ProfileMenuItem(Icons.Rounded.Pets, "我创建的猫咪", onClick = {})
-        ProfileMenuItem(Icons.Rounded.PostAdd, "我的帖子", onClick = {})
-        ProfileMenuItem(Icons.Rounded.Favorite, "我的点赞", onClick = {})
-        ProfileMenuItem(Icons.Rounded.Edit, "编辑资料", onClick = {})
-        ProfileMenuItem(Icons.Rounded.Settings, "设置", onClick = {})
+        ProfileMenuItem(
+            Icons.Rounded.Pets,
+            "我创建的猫咪",
+            onClick = { displayUser?.id?.let(onMyCatsClick) },
+        )
+        ProfileMenuItem(
+            Icons.Rounded.PostAdd,
+            "我的帖子",
+            onClick = { displayUser?.id?.let(onMyPostsClick) },
+        )
+        ProfileMenuItem(Icons.Rounded.Favorite, "我的点赞", onClick = onMyLikesClick)
+        ProfileMenuItem(Icons.Rounded.Edit, "编辑资料", onClick = onEditProfileClick)
+        ProfileMenuItem(Icons.Rounded.Settings, "设置", onClick = onSettingsClick)
 
         Spacer(modifier = Modifier.height(16.dp))
 
