@@ -1,5 +1,6 @@
 package com.gudaocat.app.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gudaocat.app.data.model.Cat
@@ -28,10 +29,17 @@ class CatViewModel @Inject constructor(
 
     fun loadCats() {
         viewModelScope.launch {
+            Log.d("GudaoCat", "CatViewModel.loadCats")
             _state.value = _state.value.copy(isLoading = true, error = null)
             repository.listCats()
-                .onSuccess { cats -> _state.value = _state.value.copy(isLoading = false, cats = cats) }
-                .onFailure { error -> _state.value = _state.value.copy(isLoading = false, error = error.message) }
+                .onSuccess { cats ->
+                    Log.d("GudaoCat", "CatViewModel.loadCats success count=${cats.size}")
+                    _state.value = _state.value.copy(isLoading = false, cats = cats)
+                }
+                .onFailure { error ->
+                    Log.e("GudaoCat", "CatViewModel.loadCats failed", error)
+                    _state.value = _state.value.copy(isLoading = false, error = error.message)
+                }
         }
     }
 
@@ -56,4 +64,3 @@ class CatViewModel @Inject constructor(
         }
     }
 }
-

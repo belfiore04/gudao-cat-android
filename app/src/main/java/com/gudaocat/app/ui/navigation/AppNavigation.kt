@@ -48,6 +48,7 @@ import com.gudaocat.app.ui.theme.DarkSurface
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextDim
 import com.gudaocat.app.viewmodel.AuthViewModel
+import com.gudaocat.app.viewmodel.CatViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -83,7 +84,10 @@ val bottomNavItems = listOf(
 )
 
 @Composable
-fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
+fun AppNavigation(
+    authViewModel: AuthViewModel = hiltViewModel(),
+    catViewModel: CatViewModel = hiltViewModel(),
+) {
     val authState by authViewModel.state.collectAsState()
     val navController = rememberNavController()
 
@@ -96,6 +100,7 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
     LaunchedEffect(authState.isLoggedIn, currentRoute) {
         when {
             authState.isLoggedIn && currentRoute in listOf(Screen.Login.route, Screen.Register.route) -> {
+                catViewModel.loadCats()
                 navController.navigate(Screen.Home.route) {
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
@@ -189,6 +194,7 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                     onCatClick = { catId ->
                         navController.navigate(Screen.CatDetail.createRoute(catId))
                     },
+                    viewModel = catViewModel,
                 )
             }
             composable(Screen.Recognize.route) {

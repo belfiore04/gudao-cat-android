@@ -44,7 +44,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCard
@@ -58,7 +57,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreen(
     onCatClick: (Int) -> Unit = {},
-    viewModel: CatViewModel = hiltViewModel(),
+    viewModel: CatViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     val cats = state.cats
