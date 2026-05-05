@@ -27,11 +27,19 @@ class CatViewModel @Inject constructor(
     private val _state = MutableStateFlow(CatListState())
     val state: StateFlow<CatListState> = _state.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            repository.cats.collect { cats ->
+                _state.value = _state.value.copy(cats = cats)
+            }
+        }
+    }
+
     fun loadCats() {
         viewModelScope.launch {
             Log.d("GudaoCat", "CatViewModel.loadCats")
             _state.value = _state.value.copy(isLoading = true, error = null)
-            repository.listCats()
+            repository.refreshCats()
                 .onSuccess { cats ->
                     Log.d("GudaoCat", "CatViewModel.loadCats success count=${cats.size}")
                     _state.value = _state.value.copy(isLoading = false, cats = cats)

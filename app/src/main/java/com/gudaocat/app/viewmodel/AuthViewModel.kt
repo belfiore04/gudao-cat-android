@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gudaocat.app.data.model.User
 import com.gudaocat.app.data.repository.AuthRepository
+import com.gudaocat.app.data.repository.CatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,7 @@ data class AuthState(
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository,
+    private val catRepository: CatRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthState())
@@ -34,9 +36,12 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             val loggedIn = repository.isLoggedIn()
             if (loggedIn) {
-                repository.getMe().onSuccess { user ->
+                val result = repository.getMe()
+                val user = result.getOrNull()
+                if (user != null) {
                     _state.value = _state.value.copy(isLoggedIn = true, user = user)
-                }.onFailure {
+                    catRepository.refreshCats()
+                } else {
                     _state.value = _state.value.copy(isLoggedIn = false)
                 }
             }
@@ -46,40 +51,44 @@ class AuthViewModel @Inject constructor(
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            repository.login(username, password)
-                .onSuccess { user ->
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        user = user,
-                        isLoggedIn = true,
-                    )
-                }
-                .onFailure { e ->
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        error = e.message ?: "登录失败",
-                    )
-                }
+            val result = repository.login(username, password)
+            val user = result.getOrNull()
+            if (user != null) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    user = user,
+                    isLoggedIn = true,
+                )
+                catRepository.refreshCats()
+            } else {
+                val e = result.exceptionOrNull()
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error = e?.message ?: "登录失败",
+                )
+            }
         }
     }
 
     fun register(username: String, password: String) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            repository.register(username, password)
-                .onSuccess { user ->
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        user = user,
-                        isLoggedIn = true,
-                    )
-                }
-                .onFailure { e ->
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        error = e.message ?: "注册失败",
-                    )
-                }
+            val result = repository.register(username, password)
+            val user = result.getOrNull()
+            if (user != null) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    user = user,
+                    isLoggedIn = true,
+                )
+                catRepository.refreshCats()
+            } else {
+                val e = result.exceptionOrNull()
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error = e?.message ?: "注册失败",
+                )
+            }
         }
     }
 

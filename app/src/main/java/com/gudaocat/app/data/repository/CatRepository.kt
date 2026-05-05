@@ -4,6 +4,9 @@ import android.util.Log
 import com.gudaocat.app.data.api.ApiService
 import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.data.model.CatCreateRequest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,22 +14,32 @@ import javax.inject.Singleton
 class CatRepository @Inject constructor(
     private val api: ApiService,
 ) {
-    suspend fun listCats(): Result<List<Cat>> {
+    private val _cats = MutableStateFlow<List<Cat>>(emptyList())
+    val cats: StateFlow<List<Cat>> = _cats.asStateFlow()
+
+    suspend fun listCats(): Result<List<Cat>> = refreshCats()
+
+    suspend fun refreshCats(): Result<List<Cat>> {
         Log.d("GudaoCat", "CatRepository.listCats request")
         return runCatching { api.getCats() }
+            .onSuccess { _cats.value = it }
     }
 
     suspend fun getCat(catId: Int): Result<Cat> = runCatching { api.getCat(catId) }
 
     suspend fun createCat(name: String, location: String?, habits: String?): Result<Cat> {
-        return runCatching {
-            api.createCat(
+        return try {
+            val cat = api.createCat(
                 CatCreateRequest(
                     name = name,
                     location = location?.ifBlank { null },
                     habits = habits?.ifBlank { null },
                 )
             )
+            refreshCats()
+            Result.success(cat)
+        } catch (error: Exception) {
+            Result.failure(error)
         }
     }
 }
