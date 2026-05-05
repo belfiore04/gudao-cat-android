@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.components.PostCard
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCardLight
@@ -43,7 +42,7 @@ fun CommunityScreen(
     onPostClick: (Int) -> Unit = {},
     onAuthorClick: (Int) -> Unit = {},
     onCreatePostClick: () -> Unit = {},
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: CommunityViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(Unit) { viewModel.loadPosts() }

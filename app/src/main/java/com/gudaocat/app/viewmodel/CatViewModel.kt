@@ -5,12 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.data.repository.CatRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class CatListState(
     val isLoading: Boolean = false,
@@ -20,8 +18,7 @@ data class CatListState(
     val savedCat: Cat? = null,
 )
 
-@HiltViewModel
-class CatViewModel @Inject constructor(
+class CatViewModel(
     private val repository: CatRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CatListState())

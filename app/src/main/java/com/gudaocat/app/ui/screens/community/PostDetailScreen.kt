@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.ui.theme.DarkBg
@@ -62,7 +61,7 @@ fun PostDetailScreen(
     onBack: () -> Unit,
     onAuthorClick: (Int) -> Unit = {},
     onCatClick: (Int) -> Unit = {},
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: CommunityViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(postId) { viewModel.loadPost(postId) }

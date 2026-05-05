@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCard
 import com.gudaocat.app.ui.theme.DarkCardLight
@@ -45,7 +44,7 @@ import com.gudaocat.app.viewmodel.CommunityViewModel
 fun CreatePostScreen(
     onBack: () -> Unit,
     onSaved: () -> Unit,
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: CommunityViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     var content by remember { mutableStateOf("") }
@@ -119,4 +118,3 @@ fun CreatePostScreen(
         }
     }
 }
-

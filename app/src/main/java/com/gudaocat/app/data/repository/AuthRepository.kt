@@ -7,11 +7,8 @@ import com.gudaocat.app.data.mock.MockData
 import com.gudaocat.app.data.model.LoginRequest
 import com.gudaocat.app.data.model.RegisterRequest
 import com.gudaocat.app.data.model.User
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class AuthRepository @Inject constructor(
+class AuthRepository(
     private val api: ApiService,
     private val tokenProvider: TokenProvider,
 ) {

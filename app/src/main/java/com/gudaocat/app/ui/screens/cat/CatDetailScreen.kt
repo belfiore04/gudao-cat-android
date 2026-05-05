@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
@@ -49,7 +48,7 @@ fun CatDetailScreen(
     catId: Int,
     onBack: () -> Unit,
     onCreatorClick: (Int) -> Unit = {},
-    viewModel: CatViewModel = hiltViewModel(),
+    viewModel: CatViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(catId) { viewModel.loadCat(catId) }

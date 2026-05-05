@@ -5,12 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.gudaocat.app.data.model.User
 import com.gudaocat.app.data.repository.AuthRepository
 import com.gudaocat.app.data.repository.CatRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class AuthState(
     val isLoading: Boolean = false,
@@ -19,8 +17,7 @@ data class AuthState(
     val isLoggedIn: Boolean = false,
 )
 
-@HiltViewModel
-class AuthViewModel @Inject constructor(
+class AuthViewModel(
     private val repository: AuthRepository,
     private val catRepository: CatRepository,
 ) : ViewModel() {

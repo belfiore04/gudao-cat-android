@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCard
 import com.gudaocat.app.ui.theme.DarkCardLight
@@ -45,7 +44,7 @@ import com.gudaocat.app.viewmodel.CatViewModel
 fun CreateCatScreen(
     onBack: () -> Unit,
     onSaved: () -> Unit,
-    viewModel: CatViewModel = hiltViewModel(),
+    viewModel: CatViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     var name by remember { mutableStateOf("") }

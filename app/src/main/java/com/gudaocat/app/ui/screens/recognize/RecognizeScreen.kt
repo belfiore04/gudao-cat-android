@@ -68,7 +68,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import com.gudaocat.app.data.model.Cat
@@ -92,7 +91,7 @@ private enum class RecognitionStep {
 fun RecognizeScreen(
     onCatClick: (Int) -> Unit = {},
     onCreateCatClick: () -> Unit = {},
-    viewModel: RecognitionViewModel = hiltViewModel(),
+    viewModel: RecognitionViewModel,
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()

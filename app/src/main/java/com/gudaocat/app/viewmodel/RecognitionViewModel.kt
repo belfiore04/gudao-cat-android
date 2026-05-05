@@ -7,12 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.data.model.RecognitionJob
 import com.gudaocat.app.data.repository.RecognitionRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class RecognitionState(
     val isLoading: Boolean = false,
@@ -23,8 +21,7 @@ data class RecognitionState(
     val error: String? = null,
 )
 
-@HiltViewModel
-class RecognitionViewModel @Inject constructor(
+class RecognitionViewModel(
     private val repository: RecognitionRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(RecognitionState())
@@ -52,4 +49,3 @@ class RecognitionViewModel @Inject constructor(
         }
     }
 }
-

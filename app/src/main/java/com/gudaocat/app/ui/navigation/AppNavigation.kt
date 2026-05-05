@@ -22,8 +22,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -32,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gudaocat.app.GudaoCatApp
 import com.gudaocat.app.ui.screens.auth.LoginScreen
 import com.gudaocat.app.ui.screens.cat.CatDetailScreen
 import com.gudaocat.app.ui.screens.cat.CreateCatScreen
@@ -48,7 +50,13 @@ import com.gudaocat.app.ui.theme.DarkSurface
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextDim
 import com.gudaocat.app.viewmodel.AuthViewModel
+import com.gudaocat.app.viewmodel.AuthViewModelFactory
 import com.gudaocat.app.viewmodel.CatViewModel
+import com.gudaocat.app.viewmodel.CatViewModelFactory
+import com.gudaocat.app.viewmodel.CommunityViewModel
+import com.gudaocat.app.viewmodel.CommunityViewModelFactory
+import com.gudaocat.app.viewmodel.RecognitionViewModel
+import com.gudaocat.app.viewmodel.RecognitionViewModelFactory
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -84,10 +92,20 @@ val bottomNavItems = listOf(
 )
 
 @Composable
-fun AppNavigation(
-    authViewModel: AuthViewModel = hiltViewModel(),
-    catViewModel: CatViewModel = hiltViewModel(),
-) {
+fun AppNavigation() {
+    val container = (LocalContext.current.applicationContext as GudaoCatApp).container
+    val authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(container.authRepository, container.catRepository),
+    )
+    val catViewModel: CatViewModel = viewModel(
+        factory = CatViewModelFactory(container.catRepository),
+    )
+    val communityViewModel: CommunityViewModel = viewModel(
+        factory = CommunityViewModelFactory(container.communityRepository),
+    )
+    val recognitionViewModel: RecognitionViewModel = viewModel(
+        factory = RecognitionViewModelFactory(container.recognitionRepository),
+    )
     val authState by authViewModel.state.collectAsState()
     val navController = rememberNavController()
 
@@ -212,6 +230,7 @@ fun AppNavigation(
                     onCreateCatClick = {
                         navController.navigate(Screen.CreateCat.route)
                     },
+                    viewModel = recognitionViewModel,
                 )
             }
             composable(Screen.Community.route) {
@@ -225,6 +244,7 @@ fun AppNavigation(
                     onCreatePostClick = {
                         navController.navigate(Screen.CreatePost.route)
                     },
+                    viewModel = communityViewModel,
                 )
             }
             composable(Screen.Profile.route) {
@@ -245,6 +265,7 @@ fun AppNavigation(
                             popUpTo(Screen.Home.route) { inclusive = true }
                         }
                     },
+                    viewModel = catViewModel,
                 )
             }
             composable(Screen.CreatePost.route) {
@@ -255,6 +276,7 @@ fun AppNavigation(
                             popUpTo(Screen.Community.route) { inclusive = true }
                         }
                     },
+                    viewModel = communityViewModel,
                 )
             }
             composable(
@@ -267,6 +289,7 @@ fun AppNavigation(
                     onCreatorClick = { userId ->
                         navController.navigate(Screen.UserProfile.createRoute(userId))
                     },
+                    viewModel = catViewModel,
                 )
             }
             composable(
@@ -282,6 +305,7 @@ fun AppNavigation(
                     onCatClick = { catId ->
                         navController.navigate(Screen.CatDetail.createRoute(catId))
                     },
+                    viewModel = communityViewModel,
                 )
             }
             composable(
@@ -297,6 +321,7 @@ fun AppNavigation(
                     onPostClick = { postId ->
                         navController.navigate(Screen.PostDetail.createRoute(postId))
                     },
+                    viewModel = communityViewModel,
                 )
             }
         }

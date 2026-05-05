@@ -6,11 +6,8 @@ import com.gudaocat.app.data.model.CommentCreateRequest
 import com.gudaocat.app.data.model.Post
 import com.gudaocat.app.data.model.PostCreateRequest
 import com.gudaocat.app.data.model.User
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class CommunityRepository @Inject constructor(
+class CommunityRepository(
     private val api: ApiService,
 ) {
     suspend fun listPosts(): Result<List<Post>> = runCatching { api.getPosts() }
@@ -35,4 +32,3 @@ class CommunityRepository @Inject constructor(
 
     suspend fun getUserPosts(userId: Int) = runCatching { api.getUserPosts(userId) }
 }
-

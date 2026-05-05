@@ -7,12 +7,10 @@ import com.gudaocat.app.data.model.Comment
 import com.gudaocat.app.data.model.Post
 import com.gudaocat.app.data.model.User
 import com.gudaocat.app.data.repository.CommunityRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class CommunityState(
     val isLoading: Boolean = false,
@@ -25,8 +23,7 @@ data class CommunityState(
     val error: String? = null,
 )
 
-@HiltViewModel
-class CommunityViewModel @Inject constructor(
+class CommunityViewModel(
     private val repository: CommunityRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CommunityState())
@@ -96,4 +93,3 @@ class CommunityViewModel @Inject constructor(
         }
     }
 }
-

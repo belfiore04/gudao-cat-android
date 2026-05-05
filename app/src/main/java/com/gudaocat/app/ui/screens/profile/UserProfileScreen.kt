@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.components.PostCard
 import com.gudaocat.app.ui.theme.DarkBg
@@ -47,7 +46,7 @@ fun UserProfileScreen(
     onBack: () -> Unit,
     onCatClick: (Int) -> Unit = {},
     onPostClick: (Int) -> Unit = {},
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: CommunityViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(userId) { viewModel.loadUser(userId) }

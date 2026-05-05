@@ -8,11 +8,8 @@ import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class RecognitionRepository @Inject constructor(
+class RecognitionRepository(
     private val api: ApiService,
 ) {
     suspend fun recognize(context: Context, uri: Uri): Result<RecognitionJob> {
@@ -33,4 +30,3 @@ class RecognitionRepository @Inject constructor(
         }
     }
 }
-

@@ -7,11 +7,8 @@ import com.gudaocat.app.data.model.CatCreateRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class CatRepository @Inject constructor(
+class CatRepository(
     private val api: ApiService,
 ) {
     private val _cats = MutableStateFlow<List<Cat>>(emptyList())
