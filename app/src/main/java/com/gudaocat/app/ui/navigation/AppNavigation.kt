@@ -97,10 +97,15 @@ fun AppNavigation(
     val currentRoute = navBackStackEntry?.destination?.route
     val showBottomBar = currentRoute in bottomNavItems.map { it.screen.route }
 
+    LaunchedEffect(authState.isLoggedIn) {
+        if (authState.isLoggedIn) {
+            catViewModel.loadCats()
+        }
+    }
+
     LaunchedEffect(authState.isLoggedIn, currentRoute) {
         when {
             authState.isLoggedIn && currentRoute in listOf(Screen.Login.route, Screen.Register.route) -> {
-                catViewModel.loadCats()
                 navController.navigate(Screen.Home.route) {
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
