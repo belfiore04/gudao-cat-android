@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +44,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.gudaocat.app.data.mock.MockData
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCard
@@ -51,16 +52,22 @@ import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.Pink
 import com.gudaocat.app.ui.theme.TextDim
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.viewmodel.CatViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
     onCatClick: (Int) -> Unit = {},
+    viewModel: CatViewModel = hiltViewModel(),
 ) {
-    val cats = remember { MockData.cats }
+    val state by viewModel.state.collectAsState()
+    val cats = state.cats
 
     var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
+    LaunchedEffect(Unit) {
+        visible = true
+        viewModel.loadCats()
+    }
 
     Column(
         modifier = Modifier
@@ -137,10 +144,30 @@ fun HomeScreen(
         ) {
             item {
                 Text(
-                    text = "附近的猫咪",
+                    text = if (state.isLoading) "正在加载猫咪..." else "附近的猫咪",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
+            }
+
+            if (state.error != null) {
+                item {
+                    Text(
+                        text = state.error ?: "加载失败",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextGray,
+                    )
+                }
+            }
+
+            if (!state.isLoading && cats.isEmpty()) {
+                item {
+                    Text(
+                        text = "还没有猫咪档案。",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextGray,
+                    )
+                }
             }
 
             itemsIndexed(cats) { index, cat ->

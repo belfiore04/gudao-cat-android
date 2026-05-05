@@ -22,12 +22,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.gudaocat.app.data.mock.MockData
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.components.PostCard
 import com.gudaocat.app.ui.theme.DarkBg
@@ -36,6 +39,7 @@ import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.OrangeLight
 import com.gudaocat.app.ui.theme.Pink
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.viewmodel.CommunityViewModel
 
 @Composable
 fun UserProfileScreen(
@@ -43,10 +47,13 @@ fun UserProfileScreen(
     onBack: () -> Unit,
     onCatClick: (Int) -> Unit = {},
     onPostClick: (Int) -> Unit = {},
+    viewModel: CommunityViewModel = hiltViewModel(),
 ) {
-    val user = MockData.userById(userId)
-    val cats = MockData.catsByCreator(userId)
-    val posts = MockData.postsByUser(userId)
+    val state by viewModel.state.collectAsState()
+    LaunchedEffect(userId) { viewModel.loadUser(userId) }
+    val user = state.selectedUser
+    val cats = state.userCats
+    val posts = state.userPosts
 
     LazyColumn(
         modifier = Modifier

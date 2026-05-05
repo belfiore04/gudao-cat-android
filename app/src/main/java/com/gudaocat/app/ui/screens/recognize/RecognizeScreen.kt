@@ -53,6 +53,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,9 +68,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
-import com.gudaocat.app.data.mock.MockData
 import com.gudaocat.app.data.model.Cat
 import com.gudaocat.app.ui.components.CatCard
 import com.gudaocat.app.ui.theme.DarkBg
@@ -77,6 +78,7 @@ import com.gudaocat.app.ui.theme.DarkCard
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.viewmodel.RecognitionViewModel
 import java.io.File
 
 private enum class RecognitionStep {
@@ -90,8 +92,10 @@ private enum class RecognitionStep {
 fun RecognizeScreen(
     onCatClick: (Int) -> Unit = {},
     onCreateCatClick: () -> Unit = {},
+    viewModel: RecognitionViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val state by viewModel.state.collectAsState()
     var step by remember { mutableStateOf(RecognitionStep.Camera) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var imageCapture by remember { mutableStateOf<ImageCapture?>(null) }
@@ -129,12 +133,25 @@ fun RecognizeScreen(
         }
     }
 
-    LaunchedEffect(step, selectedImageUri) {
+    LaunchedEffect(selectedImageUri) {
         if (step == RecognitionStep.Analyzing && selectedImageUri != null) {
-            kotlinx.coroutines.delay(1200)
-            recognizedCat = MockData.recognizedCat
-            confidence = 0.92f
-            step = RecognitionStep.Matched
+            viewModel.recognize(context, selectedImageUri!!)
+        }
+    }
+
+    LaunchedEffect(state) {
+        if (!state.isLoading && step == RecognitionStep.Analyzing) {
+            when {
+                state.matchedCat != null -> {
+                    recognizedCat = state.matchedCat
+                    confidence = state.confidence
+                    step = RecognitionStep.Matched
+                }
+                state.unknown || state.error != null -> {
+                    recognizedCat = null
+                    step = RecognitionStep.Unknown
+                }
+            }
         }
     }
 

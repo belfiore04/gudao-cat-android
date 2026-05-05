@@ -16,34 +16,44 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.gudaocat.app.data.mock.MockData
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.components.PostCard
 import com.gudaocat.app.ui.theme.DarkBg
+import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextGray
+import com.gudaocat.app.viewmodel.CommunityViewModel
 
 @Composable
 fun CommunityScreen(
     onPostClick: (Int) -> Unit = {},
     onAuthorClick: (Int) -> Unit = {},
+    onCreatePostClick: () -> Unit = {},
+    viewModel: CommunityViewModel = hiltViewModel(),
 ) {
-    val posts = remember { MockData.posts }
+    val state by viewModel.state.collectAsState()
+    LaunchedEffect(Unit) { viewModel.loadPosts() }
+    val posts = state.posts
 
     Scaffold(
         containerColor = DarkBg,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: 发帖 */ },
+                onClick = onCreatePostClick,
                 containerColor = Orange,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = CircleShape,
@@ -81,11 +91,35 @@ fun CommunityScreen(
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                if (state.error != null) {
+                    item {
+                        Text(
+                            text = state.error ?: "加载失败",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextGray,
+                        )
+                    }
+                }
+                if (!state.isLoading && posts.isEmpty()) {
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = DarkCardLight),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = "还没有社区动态，点右下角发布第一条。",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TextGray,
+                                modifier = Modifier.padding(16.dp),
+                            )
+                        }
+                    }
+                }
                 items(posts) { post ->
                     PostCard(
                         post = post,
-                        authorName = MockData.userById(post.user_id)?.username ?: "校园观察员",
-                        authorAvatar = MockData.userById(post.user_id)?.avatar,
+                        authorName = "用户 #${post.user_id}",
+                        authorAvatar = null,
                         onClick = { onPostClick(post.id) },
                         onAuthorClick = onAuthorClick,
                     )

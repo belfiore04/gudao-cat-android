@@ -12,3 +12,10 @@ data class Cat(
     val creator_id: Int? = null,
     val created_at: String? = null,
 )
+
+@Serializable
+data class CatCreateRequest(
+    val name: String,
+    val habits: String? = null,
+    val location: String? = null,
+)

@@ -24,6 +24,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +34,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.gudaocat.app.data.mock.MockData
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gudaocat.app.ui.theme.DarkBg
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
@@ -39,14 +42,18 @@ import com.gudaocat.app.ui.theme.OrangeLight
 import com.gudaocat.app.ui.theme.Pink
 import com.gudaocat.app.ui.theme.TextGray
 import com.gudaocat.app.ui.utils.rememberImageModel
+import com.gudaocat.app.viewmodel.CatViewModel
 
 @Composable
 fun CatDetailScreen(
     catId: Int,
     onBack: () -> Unit,
     onCreatorClick: (Int) -> Unit = {},
+    viewModel: CatViewModel = hiltViewModel(),
 ) {
-    val cat = MockData.catById(catId)
+    val state by viewModel.state.collectAsState()
+    LaunchedEffect(catId) { viewModel.loadCat(catId) }
+    val cat = state.selectedCat
     val photoModel = rememberImageModel(cat?.photos?.firstOrNull())
 
     LazyColumn(
@@ -143,7 +150,6 @@ fun CatDetailScreen(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    val creator = cat.creator_id?.let { MockData.userById(it) }
                     Card(
                         onClick = {
                             cat.creator_id?.let(onCreatorClick)
@@ -178,7 +184,7 @@ fun CatDetailScreen(
                                     color = TextGray,
                                 )
                                 Text(
-                                    text = creator?.username ?: "未知用户",
+                                    text = cat.creator_id?.let { "用户 #$it" } ?: "未知用户",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )

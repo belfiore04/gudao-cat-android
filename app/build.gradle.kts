@@ -23,7 +23,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("boolean", "DEMO_MODE", "true")
+            buildConfigField("boolean", "DEMO_MODE", "false")
         }
         release {
             buildConfigField("boolean", "DEMO_MODE", "false")

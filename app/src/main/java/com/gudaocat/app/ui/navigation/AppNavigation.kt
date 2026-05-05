@@ -37,6 +37,7 @@ import com.gudaocat.app.ui.screens.cat.CatDetailScreen
 import com.gudaocat.app.ui.screens.cat.CreateCatScreen
 import com.gudaocat.app.ui.screens.auth.RegisterScreen
 import com.gudaocat.app.ui.screens.community.CommunityScreen
+import com.gudaocat.app.ui.screens.community.CreatePostScreen
 import com.gudaocat.app.ui.screens.community.PostDetailScreen
 import com.gudaocat.app.ui.screens.home.HomeScreen
 import com.gudaocat.app.ui.screens.profile.ProfileScreen
@@ -56,6 +57,7 @@ sealed class Screen(val route: String) {
     object Community : Screen("community")
     object Profile : Screen("profile")
     object CreateCat : Screen("cat/create")
+    object CreatePost : Screen("post/create")
     object CatDetail : Screen("cat/{catId}") {
         fun createRoute(catId: Int) = "cat/$catId"
     }
@@ -207,6 +209,9 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                     onAuthorClick = { userId ->
                         navController.navigate(Screen.UserProfile.createRoute(userId))
                     },
+                    onCreatePostClick = {
+                        navController.navigate(Screen.CreatePost.route)
+                    },
                 )
             }
             composable(Screen.Profile.route) {
@@ -222,7 +227,21 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
             composable(Screen.CreateCat.route) {
                 CreateCatScreen(
                     onBack = { navController.popBackStack() },
-                    onSaved = { navController.popBackStack(Screen.Home.route, inclusive = false) },
+                    onSaved = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                        }
+                    },
+                )
+            }
+            composable(Screen.CreatePost.route) {
+                CreatePostScreen(
+                    onBack = { navController.popBackStack() },
+                    onSaved = {
+                        navController.navigate(Screen.Community.route) {
+                            popUpTo(Screen.Community.route) { inclusive = true }
+                        }
+                    },
                 )
             }
             composable(

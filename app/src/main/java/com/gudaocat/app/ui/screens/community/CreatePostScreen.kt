@@ -1,4 +1,4 @@
-package com.gudaocat.app.ui.screens.cat
+package com.gudaocat.app.ui.screens.community
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -39,18 +39,16 @@ import com.gudaocat.app.ui.theme.DarkCard
 import com.gudaocat.app.ui.theme.DarkCardLight
 import com.gudaocat.app.ui.theme.Orange
 import com.gudaocat.app.ui.theme.TextGray
-import com.gudaocat.app.viewmodel.CatViewModel
+import com.gudaocat.app.viewmodel.CommunityViewModel
 
 @Composable
-fun CreateCatScreen(
+fun CreatePostScreen(
     onBack: () -> Unit,
     onSaved: () -> Unit,
-    viewModel: CatViewModel = hiltViewModel(),
+    viewModel: CommunityViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    var name by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var habits by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -68,66 +66,52 @@ fun CreateCatScreen(
                 Icon(Icons.Rounded.ArrowBack, contentDescription = "返回", tint = TextGray)
             }
             Text(
-                text = "为它建档",
+                text = "发布动态",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
-            Text(
-                text = "补充猫咪的基础信息，后续可继续添加照片和观察记录。",
-                style = MaterialTheme.typography.bodyLarge,
-                color = TextGray,
+            TextField(
+                value = content,
+                onValueChange = { content = it },
+                placeholder = { Text("记录今天遇到的猫咪...", color = TextGray) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = DarkCard,
+                    unfocusedContainerColor = DarkCard,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Orange,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
-
-            CatTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = "猫咪名称",
-                imeAction = ImeAction.Next,
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            CatTextField(
-                value = location,
-                onValueChange = { location = it },
-                label = "常出没位置",
-                imeAction = ImeAction.Next,
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            CatTextField(
-                value = habits,
-                onValueChange = { habits = it },
-                label = "习性记录",
-                singleLine = false,
-                imeAction = ImeAction.Done,
-                modifier = Modifier.height(130.dp),
-            )
-
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Card(
-                onClick = { viewModel.createCat(name, location, habits, onSaved) },
-                enabled = name.isNotBlank() && !state.isLoading,
+                onClick = { viewModel.createPost(content, onSaved) },
+                enabled = content.isNotBlank() && !state.isLoading,
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (name.isNotBlank()) Orange else DarkCardLight,
+                    containerColor = if (content.isNotBlank()) Orange else DarkCardLight,
                 ),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = "创建猫咪档案",
+                    text = "发布",
                     style = MaterialTheme.typography.labelLarge,
-                    color = if (name.isNotBlank()) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        TextGray
-                    },
+                    color = if (content.isNotBlank()) MaterialTheme.colorScheme.onPrimary else TextGray,
                     modifier = Modifier.padding(16.dp),
                 )
             }
+
             state.error?.let {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(text = it, style = MaterialTheme.typography.bodyMedium, color = TextGray)
@@ -136,31 +120,3 @@ fun CreateCatScreen(
     }
 }
 
-@Composable
-private fun CatTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    modifier: Modifier = Modifier,
-    singleLine: Boolean = true,
-    imeAction: ImeAction,
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = { Text(label, color = TextGray) },
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = DarkCard,
-            unfocusedContainerColor = DarkCard,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = Orange,
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        singleLine = singleLine,
-        keyboardOptions = KeyboardOptions(imeAction = imeAction),
-    )
-}
